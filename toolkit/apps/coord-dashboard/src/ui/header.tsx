@@ -10,7 +10,7 @@ import { AnimatedValue } from "@/ui/animated-value.js";
 import { ConnectionIndicator } from "@/ui/connection-indicator.js";
 
 const metricValue = tv({
-  base: "mt-1 text-[28px]/8 font-semibold tracking-tight tabular-nums",
+  base: "text-[18px]/6 font-semibold tracking-tight tabular-nums",
   variants: { waiting: { true: "text-queued-ink", false: "text-ink" } },
 });
 
@@ -121,7 +121,7 @@ export function Header({
         <dl className="grid grid-cols-2 border-t border-line sm:grid-cols-4">
           {signals.map(({ label, value, icon: Icon, waiting }) => (
             <div
-              className="border-l border-line p-4 first:border-l-0 nth-3:border-l-0 sm:px-6 sm:nth-3:border-l"
+              className="flex items-center justify-between gap-3 border-l border-line px-4 py-2.5 first:border-l-0 nth-3:border-l-0 sm:px-6 sm:nth-3:border-l"
               key={label}
             >
               <dt className="flex items-center gap-2 text-[12px] font-medium text-muted">

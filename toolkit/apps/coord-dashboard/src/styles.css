@@ -115,6 +115,15 @@
 
 html {
   background: var(--color-canvas-base);
+  scrollbar-gutter: stable;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+[data-ending-style] {
+  display: none !important;
 }
 
 body {
