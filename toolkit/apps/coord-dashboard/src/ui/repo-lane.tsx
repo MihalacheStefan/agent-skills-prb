@@ -1,6 +1,6 @@
 import { Check, Copy, FolderGit2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { displayPath, formatRelativeTime, shortSessionId } from "@/lib/format.js";
 import { MOTION_DURATION, MOTION_EASE } from "@/lib/motion.js";
@@ -14,21 +14,27 @@ type RepoLaneProps = {
   now: number;
 };
 
+const COPIED_FEEDBACK_MS = 1500;
+
 export function RepoLane({ lane, now }: RepoLaneProps) {
   const [copied, setCopied] = useState(false);
+  const copiedTimer = useRef<number | undefined>(undefined);
+  const path = displayPath(lane.repoRoot);
   const workCount =
     lane.sessions.filter((row) => row.work !== undefined).length + lane.unmatchedWork.length;
 
-  const handleCopy = async () => {
-    if (navigator?.clipboard?.writeText) {
-      try {
-        await navigator.clipboard.writeText(displayPath(lane.repoRoot));
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
-      } catch {
-        // Ignore clipboard write failures
-      }
+  useEffect(() => () => window.clearTimeout(copiedTimer.current), []);
+
+  const copyPath = async () => {
+    try {
+      await navigator.clipboard.writeText(path);
+    } catch {
+      // Clipboard access was denied or is unavailable; keep the idle icon.
+      return;
     }
+    setCopied(true);
+    window.clearTimeout(copiedTimer.current);
+    copiedTimer.current = window.setTimeout(() => setCopied(false), COPIED_FEEDBACK_MS);
   };
 
   return (
@@ -39,7 +45,7 @@ export function RepoLane({ lane, now }: RepoLaneProps) {
       exit={{ opacity: 0, y: -8 }}
       initial={{ opacity: 0, y: 10 }}
       layout="position"
-      aria-label={displayPath(lane.repoRoot)}
+      aria-label={path}
       transition={{
         duration: MOTION_DURATION.row,
         ease: MOTION_EASE,
@@ -59,13 +65,13 @@ export function RepoLane({ lane, now }: RepoLaneProps) {
               className="max-w-44 truncate sm:max-w-[16rem] md:max-w-[20rem] lg:max-w-[24rem]"
               title={lane.repoRoot}
             >
-              {displayPath(lane.repoRoot)}
+              {path}
             </span>
             <button
               type="button"
-              onClick={handleCopy}
-              className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm text-muted transition-colors hover:bg-surface hover:text-ink focus-visible:outline-2 focus-visible:outline-accent"
-              title={copied ? "Copied!" : `Copy path: ${displayPath(lane.repoRoot)}`}
+              onClick={copyPath}
+              className="inline-flex size-5 shrink-0 items-center justify-center rounded-sm text-muted transition-colors hover:bg-surface hover:text-ink focus-visible:outline-2 focus-visible:outline-accent motion-reduce:transition-none"
+              title={copied ? "Copied!" : `Copy path: ${path}`}
               aria-label={copied ? "Path copied to clipboard" : "Copy project path to clipboard"}
             >
               {copied ? (

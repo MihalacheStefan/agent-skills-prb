@@ -1,7 +1,7 @@
 import { Tabs } from "@base-ui/react/tabs";
 import { ClipboardCheck, FileText, MessageSquareText, PanelsTopLeft } from "lucide-react";
 import { AnimatePresence, LayoutGroup, MotionConfig } from "motion/react";
-import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { ScrollRestoration, useLocation, useNavigate } from "react-router";
 import { tv } from "tailwind-variants";
 
@@ -66,7 +66,7 @@ export function App() {
     []
   );
 
-  const lanes = useMemo(() => (snapshot ? groupSnapshotByRepo(snapshot) : []), [snapshot]);
+  const lanes = snapshot ? groupSnapshotByRepo(snapshot) : [];
   const unresolvedCount = snapshot ? countFindings(snapshot.findings).unresolved : 0;
 
   return (

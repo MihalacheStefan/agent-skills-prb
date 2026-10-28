@@ -118,14 +118,6 @@ html {
   scrollbar-gutter: stable;
 }
 
-[hidden] {
-  display: none !important;
-}
-
-[data-ending-style] {
-  display: none !important;
-}
-
 body {
   min-width: 320px;
   margin: 0;
